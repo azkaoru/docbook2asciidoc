@@ -620,10 +620,10 @@
 
 
 <xsl:if test="ancestor::glossdef and preceding-sibling::element()">
-  <xsl:text>++</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
+  <xsl:text>+</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
 </xsl:if>
 <xsl:if test="ancestor::callout and preceding-sibling::element()">
-  <xsl:text>+!!!!!!!!1</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
+  <xsl:text>+</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
 </xsl:if>
 <xsl:apply-templates select="node()"/>
   <!-- Control number of blank lines following para, if it's inside a listitem or glossary -->
@@ -947,7 +947,7 @@ ____
 <!-- add start by azkaoru figure配下の要素として　programlistingをサポートする-->
 <xsl:template match="figure">
 <xsl:if test="ancestor::listitem and preceding-sibling::element()">
-  <xsl:text>+!</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
+  <xsl:text>+</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
 </xsl:if>
 <xsl:call-template name="process-id"/>
 <xsl:value-of select="util:carriage-returns(1)"/><xsl:text>.</xsl:text><xsl:apply-templates select="title"/>
@@ -1231,7 +1231,7 @@ pass:[<xsl:copy-of select="."/>]
         <xsl:choose>
           <!-- Use Docbook passthrough when code block contains other child elements besides <co>-->
           <xsl:when test="*[not(self::co) and not(indexterm)]">
-            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+!!</xsl:text>
+            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+</xsl:text>
               <xsl:value-of select="util:carriage-returns(1)"/>
             </xsl:if>
 ++++++++++++++++++++++++++++++++++++++
@@ -1241,7 +1241,7 @@ pass:[<xsl:copy-of select="."/>]
 </xsl:when>
           <!-- Use Docbook passthrough when corresponding calloutlist isn't in same section -->
           <xsl:when test="not(self::*/parent::node() = co/id(@linkends)/parent::calloutlist/parent::node())">
-            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+!!!</xsl:text>
+            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+</xsl:text>
               <xsl:value-of select="util:carriage-returns(1)"/>
             </xsl:if>
 ++++++++++++++++++++++++++++++++++++++
@@ -1262,7 +1262,7 @@ pass:[<xsl:copy-of select="."/>]
           <!-- Otherwise output as Asciidoc -->
           <xsl:otherwise>
             <xsl:value-of select="util:carriage-returns(1)"/>
-            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+!!!!!</xsl:text><xsl:value-of select="util:carriage-returns(1)"/></xsl:if>
+            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+</xsl:text><xsl:value-of select="util:carriage-returns(1)"/></xsl:if>
             <!-- Preserve non-empty "language" attribute if present -->
             <xsl:if test="@language != ''">
               <xsl:text>[source, </xsl:text>
@@ -1324,7 +1324,7 @@ pass:[<xsl:copy-of select="."/>]
 </xsl:when>
           <!-- Use Docbook passthrough when code block contains indexterms and you want to keep them -->
           <xsl:when test="indexterm and $strip-indexterms='false'">
-            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+!!!!!!</xsl:text>
+            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+</xsl:text>
               <xsl:value-of select="util:carriage-returns(1)"/>
             </xsl:if>
 ++++++++++++++++++++++++++++++++++++++
