@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book>
+	<title>test</title>
+	<chapter xmlns="">
+		<title>index</title>
+		<section>
+			<title>test</title>
+			<para>TODO:Please enter the text.
+
+				<figure>
+					<title>TODO:Please enter the Title</title>
+					<programlisting language="xml">
+						<textobject>
+							<textdata fileref="./mybook.xml" />
+						</textobject>
+					</programlisting>
+				</figure>
+
+				<table frame="all">
+					<title>TODO:Please enter the Title</title>
+					<tgroup cols="2">
+						<thead>
+							<row>
+								<entry>列1</entry>
+								<entry>列2abaaaaaaaaaaaabbbbbb</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry>列1Value</entry>
+								<entry>列2Value</entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</table>
+
+				<itemizedlist>
+					<listitem>
+						<para>foo</para>
+						<para>foo説明</para>
+					</listitem>
+					<listitem>
+						<para>zoo</para>
+						<para>zoo説明</para>
+					</listitem>
+				</itemizedlist>
+
+				<note>
+					<para>note foo</para>
+				</note>
+				<warning>
+					<para>warn foo</para>
+				</warning>
+
+			</para>
+			<section>
+				<title>subtest</title>
+				<para>TODO:Please enter the text.</para>
+			</section>
+		</section>
+		<section>
+			<title>test2</title>
+			<para>TODO:Please enter the textaaaaaaaa.</para>
+			<itemizedlist>
+				<listitem>
+					<para>foo</para>
+					<para>orz</para>
+				</listitem>
+				<listitem>
+					<para>zoo</para>
+				</listitem>
+			</itemizedlist>
+			<orderedlist>
+				<listitem>
+					<para>orderedlistA</para>
+				</listitem>
+				<listitem>
+					<para>orderedlistB</para>
+					<para>orderedlistB is foo</para>
+				</listitem>
+			</orderedlist>
+		</section>
+	</chapter>
+	<chapter xmlns="">
+		<title>index2</title>
+		<section>
+			<title>test2</title>
+			<para>TODO:Please enter the textaaaaaaaa.</para>
+			<itemizedlist>
+				<listitem>
+					<para>foo</para>
+					<para>orz</para>
+				</listitem>
+				<listitem>
+					<para>zoo</para>
+				</listitem>
+			</itemizedlist>
+			<orderedlist>
+				<listitem>
+					<para>orderedlistA</para>
+				</listitem>
+				<listitem>
+					<para>orderedlistB</para>
+					<para>orderedlistB is foo</para>
+				</listitem>
+			</orderedlist>
+		</section>
+	</chapter>
+	<chapter xmlns="">
+		<title>index3</title>
+		<section>
+			<title>test3</title>
+			<para xml:id="orz">TODO:Please enter the text.</para>
+			<para>aaa</para>
+		</section>
+	</chapter>
+	<chapter xmlns="">
+		<title>index4</title>
+		<section>
+			<title>test4</title>
+			<para>
+				<command ns3:href="#orz" xmlns:ns3="http://www.w3.org/1999/xlink">to test3</command>
+			</para>
+		</section>
+	</chapter>
+</book>
