@@ -24,6 +24,7 @@
 <xsl:param name="glossary-passthrough">false</xsl:param>
 <xsl:param name="add-equation-titles">false</xsl:param>
 
+
 <xsl:preserve-space elements="*"/>
 <xsl:strip-space elements="table row entry tgroup thead"/>
 
@@ -583,30 +584,46 @@
     <xsl:value-of select="util:carriage-returns(2)"/>
     <xsl:apply-templates select="node()[not(self::title)]"/>
   </xsl:template>
-  
+
+
+
+
+
+
+
 <xsl:template match="para|simpara">
+ 
+  
   <xsl:choose>
     <xsl:when test="ancestor::callout"/>
     <xsl:otherwise>
-      <xsl:call-template name="process-id"/>
+            <xsl:call-template name="process-id"/>       
     </xsl:otherwise>
   </xsl:choose>
   <!-- If it's the 2nd+ para inside a listitem, glossdef, or callout (but not a nested admonition or sidebar), precede it with a plus symbol -->
 <xsl:if test="ancestor::listitem and preceding-sibling::element()">
   <xsl:choose>
   <xsl:when test="not(ancestor::warning|ancestor::note|ancestor::caution|ancestor::tip|ancestor::important) and not(ancestor::sidebar)">
-    <xsl:text>+</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
+    <!-- 余計なタブを削除するために追加 start by 
+     -->
+    <xsl:value-of select="util:carriage-returns(2)"/>
+    <!--end by azkaoru -->
+    <xsl:text>+ </xsl:text><xsl:value-of select="util:carriage-returns(2)"/>
   </xsl:when>
   <xsl:otherwise>
     <xsl:value-of select="util:carriage-returns(1)"/>
   </xsl:otherwise>
 </xsl:choose>
 </xsl:if>
+
+
+
+
 <xsl:if test="ancestor::glossdef and preceding-sibling::element()">
-  <xsl:text>+</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
+  <xsl:text>++</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
 </xsl:if>
 <xsl:if test="ancestor::callout and preceding-sibling::element()">
-  <xsl:text>+</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
+  <xsl:text>+!!!!!!!!1</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
 </xsl:if>
 <xsl:apply-templates select="node()"/>
   <!-- Control number of blank lines following para, if it's inside a listitem or glossary -->
@@ -687,7 +704,7 @@ ____
 <xsl:call-template name="process-id"/>
 [<xsl:value-of select="upper-case(name())"/>]
 <xsl:apply-templates select="." mode="title"/>====
-<xsl:apply-templates select="node()[not(self::title)]"/>====
+<xsl:apply-templates select="node()[not(self::title)]"/><xsl:value-of select="util:carriage-returns(1)"/>====
 <xsl:value-of select="util:carriage-returns(2)"/>
 </xsl:template>
 
@@ -868,25 +885,52 @@ ____
   </xsl:choose>
 </xsl:template>
 
+
+<!-- add start by azkaoru  リストの対応。listitem/paraの最初の要素の場合は、リスト(- list )として記載するために、listitem/paraの最初の要素 である場合は、レンダリング--> 
+<!-- listitem/paraの最初の要素の場合には、先祖のitemizedlistをカウントする。最初のitemizedlistCount-->
 <xsl:template match="itemizedlist">
 <xsl:call-template name="process-id"/>
 <xsl:if test="@spacing">
 [options="<xsl:value-of select="@spacing"/>"]
 </xsl:if>
 <xsl:for-each select="listitem">
-* <xsl:apply-templates/>
+  <xsl:variable name="listCount" select="count(ancestor::itemizedlist) + count(ancestor::orderedlist)" />
+  <xsl:choose>
+     <xsl:when test="child::para[position()=1] and $listCount mod 2 = 1"><xsl:value-of select="util:carriage-returns(1)"/>- <xsl:value-of select="child::para[position()=1]"/></xsl:when>
+  </xsl:choose>
+   <xsl:choose>
+     <xsl:when test="child::para[position()=1] and $listCount mod 2 = 0"><xsl:value-of select="util:carriage-returns(1)"/>* <xsl:value-of select="child::para[position()=1]"/></xsl:when>
+  </xsl:choose>
+<xsl:apply-templates/>
 </xsl:for-each>
 </xsl:template>
+<!-- add end by azkaoru end -->
 
+<!-- add start by azkaoru　 listitem/paraの最初の要素 である場合は、すでに リスト(- list）がレンダリングされているため、２重で表示しないように、listitem/paraの最初の要素 である場合は、emptyStringで置き換える　-->    
+<!--https://stackoverflow.com/questions/17560446/xslt-replace-value -->
+<!-- templateタグの値になにも設定していないので、emptyStringとなる -->
+<xsl:template match="itemizedlist/listitem/para[position()=1]/text()"></xsl:template>
+<xsl:template match="orderedlist/listitem/para[position()=1]/text()"></xsl:template>
+<!-- add end by azkaoru -->
+
+<!-- add start by azkaoru -->
 <xsl:template match="orderedlist">
 <xsl:call-template name="process-id"/>
 <xsl:if test="@spacing">
 [options="<xsl:value-of select="@spacing"/>"]
 </xsl:if>
 <xsl:for-each select="listitem">
-. <xsl:apply-templates/>
+  <xsl:variable name="listCount" select="count(ancestor::itemizedlist) + count(ancestor::orderedlist)" />
+  <xsl:choose>
+     <xsl:when test="child::para[position()=1] and $listCount mod 2 = 1"><xsl:value-of select="util:carriage-returns(1)"/><xsl:value-of select="position()"/>. <xsl:value-of select="child::para[position()=1]"/></xsl:when>
+  </xsl:choose>
+   <xsl:choose>
+     <xsl:when test="child::para[position()=1] and $listCount mod 2 = 0"><xsl:value-of select="util:carriage-returns(1)"/>. <xsl:value-of select="child::para[position()=1]"/></xsl:when>
+  </xsl:choose>
+  <xsl:apply-templates/>
 </xsl:for-each>
 </xsl:template>
+<!-- end by azkaoru -->
 
 <xsl:template match="simplelist">
 <xsl:value-of select="util:carriage-returns(1)"/>
@@ -898,17 +942,39 @@ ____
 <xsl:value-of select="util:carriage-returns(2)"/>
 </xsl:template>
 
+
+
+<!-- add start by azkaoru figure配下の要素として　programlistingをサポートする-->
 <xsl:template match="figure">
 <xsl:if test="ancestor::listitem and preceding-sibling::element()">
-  <xsl:text>+</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
+  <xsl:text>+!</xsl:text><xsl:value-of select="util:carriage-returns(1)"/>
 </xsl:if>
 <xsl:call-template name="process-id"/>
-<xsl:text>.</xsl:text><xsl:apply-templates select="title"/>
+<xsl:value-of select="util:carriage-returns(1)"/><xsl:text>.</xsl:text><xsl:apply-templates select="title"/>
+
+<xsl:if test="mediaobject/imageobject[@role='web']/imagedata/@fileref">
 image::<xsl:value-of select="mediaobject/imageobject[@role='web']/imagedata/@fileref"/>[]
+</xsl:if>
+<xsl:if test="programlisting/@language">
+[source,<xsl:value-of select="programlisting/@language"/>]
+</xsl:if>
+<xsl:if test="programlisting/textobject/textdata/@fileref">
+----
+include::<xsl:value-of select="programlisting/textobject/textdata/@fileref"/>[]
+----
+</xsl:if>
+
 <xsl:choose>
   <xsl:when test="ancestor::listitem and following-sibling::element()"/>
   <xsl:otherwise><xsl:value-of select="util:carriage-returns(1)"/></xsl:otherwise>
 </xsl:choose>
+</xsl:template>
+
+<!-- add start by azkaoru textobjectの先祖がprogramlistingで、かつ先祖にfigureが存在しない場合はerr -->
+<xsl:template match="textdata">
+ <xsl:if test="ancestor::programlisting and count(ancestor::figure)=0 ">
+    <xsl:message terminate="yes"> programlisting/textobject/textdata require figure tag  in parent !!!</xsl:message>
+ </xsl:if>
 </xsl:template>
 
 <xsl:template match="informalfigure">
@@ -1165,7 +1231,7 @@ pass:[<xsl:copy-of select="."/>]
         <xsl:choose>
           <!-- Use Docbook passthrough when code block contains other child elements besides <co>-->
           <xsl:when test="*[not(self::co) and not(indexterm)]">
-            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+</xsl:text>
+            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+!!</xsl:text>
               <xsl:value-of select="util:carriage-returns(1)"/>
             </xsl:if>
 ++++++++++++++++++++++++++++++++++++++
@@ -1175,7 +1241,7 @@ pass:[<xsl:copy-of select="."/>]
 </xsl:when>
           <!-- Use Docbook passthrough when corresponding calloutlist isn't in same section -->
           <xsl:when test="not(self::*/parent::node() = co/id(@linkends)/parent::calloutlist/parent::node())">
-            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+</xsl:text>
+            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+!!!</xsl:text>
               <xsl:value-of select="util:carriage-returns(1)"/>
             </xsl:if>
 ++++++++++++++++++++++++++++++++++++++
@@ -1185,7 +1251,7 @@ pass:[<xsl:copy-of select="."/>]
 </xsl:when>
           <!-- Use Docbook passthrough when code block contains indexterms and you want to keep them -->
           <xsl:when test="indexterm and $strip-indexterms='false'">
-            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+</xsl:text>
+            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+!!!!</xsl:text>
               <xsl:value-of select="util:carriage-returns(1)"/>
             </xsl:if>
 ++++++++++++++++++++++++++++++++++++++
@@ -1196,7 +1262,7 @@ pass:[<xsl:copy-of select="."/>]
           <!-- Otherwise output as Asciidoc -->
           <xsl:otherwise>
             <xsl:value-of select="util:carriage-returns(1)"/>
-            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+</xsl:text><xsl:value-of select="util:carriage-returns(1)"/></xsl:if>
+            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+!!!!!</xsl:text><xsl:value-of select="util:carriage-returns(1)"/></xsl:if>
             <!-- Preserve non-empty "language" attribute if present -->
             <xsl:if test="@language != ''">
               <xsl:text>[source, </xsl:text>
@@ -1258,7 +1324,7 @@ pass:[<xsl:copy-of select="."/>]
 </xsl:when>
           <!-- Use Docbook passthrough when code block contains indexterms and you want to keep them -->
           <xsl:when test="indexterm and $strip-indexterms='false'">
-            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+</xsl:text>
+            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+!!!!!!</xsl:text>
               <xsl:value-of select="util:carriage-returns(1)"/>
             </xsl:if>
 ++++++++++++++++++++++++++++++++++++++
@@ -1269,7 +1335,7 @@ pass:[<xsl:copy-of select="."/>]
           <!-- Output Asciidoc -->
           <xsl:otherwise>
             <xsl:value-of select="util:carriage-returns(1)"/>
-            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+</xsl:text><xsl:value-of select="util:carriage-returns(1)"/></xsl:if>
+            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+!!!!!!!</xsl:text><xsl:value-of select="util:carriage-returns(1)"/></xsl:if>
             <!-- Preserve non-empty "language" attribute if present -->
             <xsl:if test="@language != ''">
               <xsl:text>[source, </xsl:text>
@@ -1448,8 +1514,7 @@ pass:[<xsl:copy-of select="."/>]
 
 <xsl:template match="section">
   <xsl:call-template name="process-id"/>
-  <xsl:sequence select="string-join (('&#10;&#10;', for $i in (1 to count (ancestor::section) + 3) return '='),'')"/>
-  <xsl:apply-templates select="title"/>
+  <xsl:sequence select="string-join (('&#10;&#10;', for $i in (1 to count (ancestor::section) + 3) return '='),'')"/><xsl:text> </xsl:text><xsl:apply-templates select="title"/>
   <xsl:value-of select="util:carriage-returns(2)"/>
   <xsl:apply-templates select="*[not(self::title)]"/>
 </xsl:template>
@@ -1481,7 +1546,7 @@ pass:[<xsl:copy-of select="."/>]
 
 <xsl:template name="process-id">
   <xsl:if test="@id">
-    <xsl:text xml:space="preserve">[[</xsl:text>
+    <xsl:value-of select="util:carriage-returns(1)"/><xsl:text xml:space="preserve">[[</xsl:text>
     <xsl:value-of select="@id"/>
     <xsl:text xml:space="preserve">]]&#10;</xsl:text>
   </xsl:if>
