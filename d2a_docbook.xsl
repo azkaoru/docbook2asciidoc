@@ -1251,7 +1251,7 @@ pass:[<xsl:copy-of select="."/>]
 </xsl:when>
           <!-- Use Docbook passthrough when code block contains indexterms and you want to keep them -->
           <xsl:when test="indexterm and $strip-indexterms='false'">
-            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+!!!!</xsl:text>
+            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+</xsl:text>
               <xsl:value-of select="util:carriage-returns(1)"/>
             </xsl:if>
 ++++++++++++++++++++++++++++++++++++++
@@ -1335,7 +1335,7 @@ pass:[<xsl:copy-of select="."/>]
           <!-- Output Asciidoc -->
           <xsl:otherwise>
             <xsl:value-of select="util:carriage-returns(1)"/>
-            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+!!!!!!!</xsl:text><xsl:value-of select="util:carriage-returns(1)"/></xsl:if>
+            <xsl:if test="ancestor::listitem and preceding-sibling::element()"><xsl:text>+</xsl:text><xsl:value-of select="util:carriage-returns(1)"/></xsl:if>
             <!-- Preserve non-empty "language" attribute if present -->
             <xsl:if test="@language != ''">
               <xsl:text>[source, </xsl:text>
