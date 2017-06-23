@@ -1454,7 +1454,8 @@ pass:[<xsl:copy-of select="."/>]
 
 <xsl:template match="table|informaltable">
 <xsl:call-template name="process-id"/>
-<xsl:apply-templates select="." mode="title"/>
+<!-- add azkaoru 余計なタブを削除-->
+<xsl:value-of select="util:carriage-returns(1)"/><xsl:apply-templates select="." mode="title"/>
 <xsl:if test="descendant::thead">
 <xsl:text>[options="header"]</xsl:text>
 </xsl:if>
