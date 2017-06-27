@@ -5,6 +5,8 @@ git clone https://github.com/azkaoru/docbook2asciidoc.git
 cd ./docbook2asciidoc
 ----
 
+ * run 2step
 ----
-java -jar saxon9he.jar -s tubamedocbook.xml -o tubamedocbook.asciidoc d2a_docbook.xsl
+java -jar saxon9he.jar -s tubamedocbook.xml -o tmp.xml removeAllPrefix.xsl
+java -jar saxon9he.jar -s tmp.xml  -o tubamedocbook.adoc d2a_docbook.xsl
 ----
