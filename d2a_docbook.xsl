@@ -2,8 +2,9 @@
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:xs="http://www.w3.org/2001/XMLSchema"
  xmlns:util="http://github.com/oreillymedia/docbook2asciidoc/"
- exclude-result-prefixes="util"
- >
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xml="http://www.w3.org/XML/1998/namespace"
+ exclude-result-prefixes="util">
   
 <!-- Mapping to allow use of XML reserved chars in AsciiDoc markup elements, e.g., angle brackets for cross-references --> 
 <xsl:character-map name="xml-reserved-chars">
@@ -767,7 +768,30 @@ ____
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="command">__<xsl:if test="contains(., '~') or contains(., '_')">$$</xsl:if><xsl:apply-templates/><xsl:if test="contains(., '~') or contains(., '_')">$$</xsl:if>__</xsl:template>
+
+
+<xsl:template match="command">
+
+<xsl:choose>
+
+  <!--TUBAMEではxlinkのhrefでドキュメント内にリンクが飛べるにようになっているため、asciidocのcross referencesで対応する. -->
+  <!-- <command ns3:href="#orz" xmlns:ns3="http://www.w3.org/1999/xlink">to test3</command> -->
+  <!-- <<orz,to test> -->
+  
+   <xsl:when test="./@xlink:href">
+     <xsl:value-of select="util:carriage-returns(1)"/><xsl:text disable-output-escaping="yes">&lt;&lt;</xsl:text>
+   
+     <xsl:if test="starts-with(./@xlink:href,'#')">
+        <xsl:value-of select="replace(./@xlink:href, '#', '')"></xsl:value-of>,</xsl:if>
+     <xsl:if test="contains(., '~') or contains(., '_')">$$</xsl:if><xsl:apply-templates/><xsl:if test="contains(., '~') or contains(., '_')">$$</xsl:if><xsl:text disable-output-escaping="yes">&gt;&gt;</xsl:text>
+   </xsl:when>
+  <xsl:otherwise>
+     __<xsl:if test="contains(., '~') or contains(., '_')">$$</xsl:if><xsl:apply-templates/><xsl:if test="contains(., '~') or contains(., '_')">$$</xsl:if>__
+   </xsl:otherwise>
+</xsl:choose>
+</xsl:template>
+
+
 
   <!-- Normalize-space() on text node below includes extra handling for child elements of command, to add needed spaces back in. (They're removed by normalize-space(), which normalizes the two text nodes separately.) -->
   <xsl:template match="command/text()">
